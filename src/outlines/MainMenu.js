@@ -38,7 +38,7 @@ const MainMenu = () => {
           to="/news"
           className={({ isActive }) => classNames({ on: isActive })}
         >
-          {t('뉴스')}
+          {t('AI Info')}
         </NavLink>
       </div>
     </MenuBox>
