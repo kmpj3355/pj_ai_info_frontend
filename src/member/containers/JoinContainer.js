@@ -1,111 +1,88 @@
-'use client';
-import React, {
-  useLayoutEffect,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getCommonActions } from '@/commons/contexts/CommonContext';
-import JoinForm from '../components/JoinForm';
-import { StyledWrapper } from '@/commons/layouts/StyledWrapper';
 import { apiJoin } from '../apis/apiJoin';
-import { getProfessors } from '../apis/apiInfo';
-
-const initalForm = {
-  authority: 'STUDENT',
-  status: 'UNDERGRADUATE',
-  agree: false,
-};
+import JoinForm from '../components/JoinForm';
 
 const JoinContainer = () => {
-  const { t } = useTranslation();
-  const { setMainTitle } = getCommonActions();
-  const router = useRouter();
-  const [form, setForm] = useState(initalForm);
+  // 양식 데이터
+  const [form, setForm] = useState({
+    agree: false,
+  });
+
+  // 양식 항목별 에러 메세지
   const [errors, setErrors] = useState({});
 
-  const [professors, setProfessors] = useState([]);
-  const [skey, setSkey] = useState('');
+  const { t } = useTranslation();
 
-  useLayoutEffect(() => {
-    setMainTitle(t('회원가입'));
-  }, [t, setMainTitle]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const professors = await getProfessors(skey);
-        setProfessors(professors);
-        if (professors && professors.length > 0) {
-          setForm((form) => ({ ...form, professor: professors[0].memberSeq }));
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, [skey]);
-
+  /**
+   * 회원 가입 처리
+   *
+   * 1. 데이터 검증
+   *    1) 필수 항목 체크 - 이메일, 비밀번호, 비밀번호 확인, 회원명, 약관동의
+   *    2) 이메일 중복 여부, 이메일 형식 체크
+   *    3) 비밀번호 복잡성 체크
+   *    4) 비밀번호와 비밀번호 확인 일치 여부
+   *
+   * 2. 가입 처리 - 영구 저장
+   * 3. 로그인 페이지 이동
+   */
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
 
       const _errors = {};
-      let hasErrors = false;
+      let hasErrors = false; // 에러 유무
 
-      /* 필수 항목 검증 S */
+      /* 데이터 검증 - 필수 항목 체크 S */
       const requiredFields = {
         email: t('이메일을_입력하세요.'),
         password: t('비밀번호를_입력하세요.'),
         confirmPassword: t('비밀번호를_확인하세요.'),
-        username: t('회원명을_입력하세요.'),
-        authority: t('가입유형을_선택하세요.'),
-        zonecode: t('우편번호를_입력하세요.'),
-        address: t('주소를_입력하세요.'),
-        birthDate: t('생년월일을_입력하세요.'),
+        userName: t('회원명을_입력하세요.'),
+        agree: t('회원가입_약관에_동의하세요.'),
       };
 
-      if (form?.authority === 'STUDENT') {
-        requiredFields.department = t('학과명을_입력하세요.');
-        requiredFields.studentNo = t('학번을_입력하세요.');
-      } else {
-        requiredFields.empNo = t('사번을_입력하세요.');
-      }
-
-      for (const [field, message] of Object.entries(requiredFields)) {
-        if (!form[field] || !form[field]?.trim()) {
-          _errors[field] = _errors[field] ?? [];
-          _errors[field].push(message);
+      for (const [field, msg] of Object.entries(requiredFields)) {
+        // !form[field] - null, undefined, '' 체크, !form[field].trim() //  - '    '
+        if (
+          !form[field] ||
+          (typeof form[field] === 'string' && !form[field].trim())
+        ) {
+          _errors[field] = _errors[field] || [];
+          _errors[field].push(msg);
           hasErrors = true;
         }
       }
 
-      if (!form.agree) {
-        _errors.agree = [t('회원가입_약관에_동의하세요.')];
+      /* 데이터 검증 - 필수 항목 체크 E */
+
+      /* 데이터 검증 - 비밀번호와 비밀번호 확인 일치 여부 */
+      if (
+        form.password &&
+        form.confirmPassword &&
+        form.password !== form.confirmPassword
+      ) {
+        _errors.confirmPassword = _errors.confirmPassword || [];
+        _errors.confirmPassword.push(t('비밀번호가_정확하지_않습니다.'));
         hasErrors = true;
       }
-      /* 필수 항목 검증 E */
 
-      /* 비밀번호 및 비밀번호 확인 일치 여부 */
-      if (form.password !== form.confirmPassword) {
-        _errors.confirmPassword = [t('비밀번호가_일치하지_않습니다.')];
-        hasErrors = true;
-      }
-
-      setErrors(_errors);
       if (hasErrors) {
-        // 검증 실패시 회원 가입 X
+        setErrors(_errors);
         return;
       }
 
-      // 회원 가입 처리
-      (async () => {
-        try {
-          await apiJoin(form);
-          setForm(initalForm);
-          router.replace('/member/login'); // 회원가입 완료 후 페이지 이동
-        } catch (err) {
+      /* 가입처리 S */
+      apiJoin(form)
+        .then(() => {
+          /* 가입완료 후 로그인 페이지 이동 */
+          navigate('/member/login', { replace: true }); // replace: true -> 방문기록 X
+        })
+        .catch((err) => {
+          console.log(err);
           // 검증 실패, 가입 실패
           const messages =
             typeof err.message === 'string'
@@ -117,38 +94,34 @@ const JoinContainer = () => {
             _errors[field].push(_messages);
           }
           setErrors({ ..._errors });
-        }
-      })();
+        });
+
+      /* 가입처리 E */
     },
-    [form, router, t],
+    [t, form, navigate],
   );
 
   const onChange = useCallback((e) => {
     const name = e.target.name;
-    const value = e.target.value;
-    if (name === 'skey') {
-      setSkey(value);
-    } else {
-      setForm((form) => ({ ...form, [name]: value }));
-    }
-  }, []);
-
-  const onToggle = useCallback((name, value) => {
+    const value = e.target.value.trim();
     setForm((form) => ({ ...form, [name]: value }));
   }, []);
 
+  const onToggle = useCallback(() => {
+    setForm((form) => ({ ...form, agree: !form.agree }));
+  }, []);
+
+  const onReset = useCallback(() => setForm({ agree: false }), []);
+
   return (
-    <StyledWrapper>
-      <JoinForm
-        form={form}
-        onSubmit={onSubmit}
-        onChange={onChange}
-        onToggle={onToggle}
-        errors={errors}
-        skey={skey}
-        professors={professors}
-      />
-    </StyledWrapper>
+    <JoinForm
+      form={form}
+      errors={errors}
+      onSubmit={onSubmit}
+      onChange={onChange}
+      onToggle={onToggle}
+      onReset={onReset}
+    />
   );
 };
 

@@ -1,12 +1,11 @@
 import apiRequest from '../../commons/libs/apiRequest';
 import cookies from 'react-cookies';
-import { getFiles } from '@/commons/libs/apiFile';
 
 // 로그인 처리
 export const apiLogin = (form) =>
   new Promise((resolve, reject) => {
     cookies.remove('token', { path: '/' });
-    apiRequest('/member/account/token', 'POST', form)
+    apiRequest('/account/token', 'POST', form)
       .then((res) => {
         if (!res.data.success) {
           // 검증 실패, 로그인 실패
@@ -23,7 +22,7 @@ export const apiLogin = (form) =>
 // 로그인한 회원정보 조회
 export const apiUser = () =>
   new Promise((resolve, reject) => {
-    apiRequest('/member/account')
+    apiRequest('/account')
       .then((res) => {
         if (res.status !== 200) {
           reject(res.data);
@@ -31,22 +30,7 @@ export const apiUser = () =>
           return;
         }
 
-        const user = res.data.data;
-
-        (async () => {
-          try {
-            const files = await getFiles(user.gid);
-            if (files && files.length > 0) {
-              const file = files[0];
-              const profileImage = `${file.thumbUrl}?seq=${file.seq}&width=300&height=400`;
-              user.profileImage = profileImage;
-            }
-          } catch (err) {
-            console.error(err);
-          }
-
-          resolve(user);
-        })();
+        resolve(res.data.data);
       })
       .catch((err) => {
         cookies.remove('token', { path: '/' });

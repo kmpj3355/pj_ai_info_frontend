@@ -1,116 +1,86 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Link from 'next/link';
-import StyledMessage from '@/commons/components/StyledMessage';
-import { StyledInput } from '@/commons/components/StyledInput';
-import { StyledButton } from '@/commons/components/StyledButton';
-import { getCommonActions } from '@/commons/contexts/CommonContext';
-import { colors } from '@/theme/colors';
+import { Link } from 'react-router-dom';
+import { FaLock, FaKey, FaUserPlus } from 'react-icons/fa';
+import InputBox from '../../commons/components/InputBox';
+import { MidButton } from '../../commons/components/Buttons';
+import MessageBox from '../../commons/components/MessageBox';
+import fontSize from '../../styles/fontSize';
 
-const ButtonGroup = styled.div`
-  display: flex;
-  width: ${({ width }) => (width ? `${width}px` : '100%')};
-  margin: 20px auto;
-
-  button {
-    width: 0;
-    flex-grow: 1;
-  }
-
-  button + button {
-    margin-left: 5px;
-  }
-
-  .linkjoin {
-    color: ${colors.white};
-  }
-`;
+const { small } = fontSize;
 
 const FormBox = styled.form`
-  dl {
-    display: flex;
-    align-items: center;
+  width: 350px;
+  margin: 0 auto;
 
-    dt {
-      width: 120px;
-    }
-
-    dd {
-      flex-grow: 1;
-    }
+  input {
+    margin-bottom: 5px;
   }
+`;
+const LinkBox = styled.div`
+  width: 350px;
+  margin: 10px auto 0;
+  display: flex;
+  border: 1px solid #d5d5d5;
+  border-left: 0;
+  border-right: 0;
 
-  dl + dl {
-    margin-top: 10px;
-  }
-
-  .radio {
-    margin-right: 10px;
-  }
-
-  .agree {
+  a {
+    flex-grow: 1;
+    width: 0;
     text-align: center;
-    margin: 15px 0;
+    padding: 10px 0;
+    font-size: ${small};
 
     svg {
-      font-size: 1.5rem;
       vertical-align: middle;
-      margin-right: 5px;
     }
   }
 `;
-const LoginForm = ({ form, errors, onSubmit, onChange }) => {
+
+const LoginForm = ({ form, onSubmit, onChange, errors }) => {
   const { t } = useTranslation();
 
-  const { setShowHeader, setShowFooter, setShowMainMenu } = getCommonActions();
-
-  useLayoutEffect(() => {
-    setShowHeader(true); // 가리기
-    setShowFooter(true);
-    setShowMainMenu(true);
-  }, [setShowHeader, setShowFooter, setShowMainMenu]);
-
   return (
-    <FormBox onSubmit={onSubmit} autoComplete="off">
-      <dl>
-        <dt>{t('이메일')}</dt>
-        <dd>
-          <StyledInput
-            type="text"
-            name="email"
-            value={form?.email || ''}
-            onChange={onChange}
-          />
-          <StyledMessage variant="danger">{errors?.email}</StyledMessage>
-        </dd>
-      </dl>
-      <dl>
-        <dt>{t('비밀번호')}</dt>
-        <dd>
-          <StyledInput
-            type="password"
-            name="password"
-            value={form?.password || ''}
-            onChange={onChange}
-          />
-          <StyledMessage variant="danger">{errors?.password}</StyledMessage>
-        </dd>
-      </dl>
+    <>
+      <FormBox onSubmit={onSubmit} autoComplete="off">
+        <InputBox
+          type="text"
+          name="email"
+          value={form.email ?? ''}
+          placeholder={t('이메일')}
+          onChange={onChange}
+        />
+        <MessageBox messages={errors.email} color="danger" />
 
-      <ButtonGroup>
-        <StyledButton type="button" variant="primary">
-          <Link href="/member/join" className="linkjoin">
-            {t('회원가입')}
-          </Link>
-        </StyledButton>
-        <StyledButton type="submit" variant="primary">
+        <InputBox
+          type="password"
+          name="password"
+          value={form.password ?? ''}
+          placeholder={t('비밀번호')}
+          onChange={onChange}
+        />
+        <MessageBox messages={errors.password} color="danger" />
+
+        <MidButton type="submit" color="primary">
           {t('로그인')}
-        </StyledButton>
-      </ButtonGroup>
+        </MidButton>
 
-      <StyledMessage variant="danger">{errors?.global}</StyledMessage>
-    </FormBox>
+        <MessageBox messages={errors.global} color="danger" />
+      </FormBox>
+      <LinkBox>
+        <Link to="/member/find_id">
+          <FaLock /> {t('아이디_찾기')}
+        </Link>
+        <Link to="/member/find_pw">
+          <FaKey /> {t('비밀번호_찾기')}
+        </Link>
+        <Link to="/member/join">
+          <FaUserPlus /> {t('회원가입')}
+        </Link>
+      </LinkBox>
+    </>
   );
 };
 

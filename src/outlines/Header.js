@@ -7,68 +7,140 @@ import classNames from 'classnames';
 import { FaSearch } from 'react-icons/fa';
 import fontSize from '../styles/fontSize';
 import { color } from '../styles/color';
-import testLogo from '../images/logo.png';
+import logo from '../images/logo.png';
 import MainMenu from './MainMenu';
-import CurrentAdress from '../kakaoapi/CurrentAdress';
 
 import UserInfoContext from '../member/modules/UserInfoContext';
+
 import { SmallButton } from '../commons/components/Buttons';
 
-const { primary, dark, light } = color;
+const { primary, dark, light, info } = color;
 
 const HeaderBox = styled.header`
   .site-top {
-    background: #f8f8f8;
-    border-bottom: 1px solid #d5d5d5;
-    height: 35px;
+    background: #f9f9f9; /* 밝은 그레이톤 배경 */
+    border-bottom: 2px solid #ebebeb; /* 밝은 회색 테두리 */
+    height: 25px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 효과 */
+    position: relative;
+    z-index: 10;
 
     div {
-      text-align: right;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      span {
+        margin-right: 15px;
+        font-size: ${fontSize.medium};
+        color: ${dark};
+        font-weight: 600; /* 두꺼운 폰트로 강조 */
+      }
 
       a {
-        display: inline-block;
-        line-height: 34px;
-        margin-left: 10px;
-        font-size: ${fontSize.normal};
+        color: ${dark};
+        font-size: ${fontSize.medium};
+        text-decoration: none;
+        margin-left: 15px;
+        padding: 8px 20px;
+        border-radius: 50px; /* 둥근 버튼 스타일 */
+        transition: background-color 0.3s, color 0.3s;
+        background-color: transparent;
+
+        &:hover {
+          color: ${primary};
+        }
 
         &.on {
-          color: ${primary};
+          background-color: ${primary};
+          color: ${light};
+          font-weight: bold;
         }
       }
     }
   }
 
   .logo-search {
-    div {
+    padding: 20px 0;
+    background: linear-gradient(
+      135deg,
+      #fff,
+      #2193b0
+    ); /* 부드러운 그라데이션 배경 */
+    color: ${light};
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 살짝 더 강한 그림자 */
+
+    .layout-width {
       display: flex;
-      justify-content: space-between;
-      height: 150px;
       align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1200px; /* 중앙에 고정된 넓이 */
+      margin: 0 auto;
+    }
 
-      form {
+    form {
+      display: flex;
+      height: 50px;
+      width: 400px;
+      background: #fff;
+      border-radius: 25px;
+      padding: 5px 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s;
+
+      &:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
+      }
+
+      input[type='text'] {
+        flex-grow: 1;
+        border: none;
+        border-radius: 25px;
+        padding: 0 15px;
+        outline: none;
+        font-size: ${fontSize.medium};
+      }
+
+      button {
+        width: 45px;
+        height: 40px;
+        background: ${info};
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
         display: flex;
-        height: 45px;
-        width: 380px;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s;
 
-        button {
-          width: 45px;
-          background: ${dark};
-          border: 0;
-          cursor: pointer;
-
-          svg {
-            color: ${light};
-            font-size: 1.75rem;
-          }
+        svg {
+          color: #fff;
+          font-size: 1.5rem;
         }
 
-        input[type='text'] {
-          flex-grow: 1;
-          border: 5px solid ${dark};
-          padding: 0 10px;
+        &:hover {
+          background-color: ${dark};
         }
       }
     }
+  }
+`;
+
+const LogoImage = styled.img`
+  width: 80px; // 적당한 크기의 로고
+  height: auto; // 높이는 자동으로
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: scale(1.1); // 로고에 마우스를 올리면 확대되는 효과
   }
 `;
 
@@ -94,7 +166,6 @@ const Header = () => {
     <HeaderBox>
       <section className="site-top">
         <div className="layout-width">
-          <CurrentAdress />
           {isLogin ? (
             <>
               {/* 로그인 상태 */}
@@ -108,7 +179,7 @@ const Header = () => {
                 {t('마이페이지')}
               </NavLink>
               {isAdmin && (
-                <a href={adminUrl} target="_blank">
+                <a href={adminUrl} target="_blank" rel="noopener noreferrer">
                   {t('사이트_관리')}
                 </a>
               )}
@@ -138,7 +209,7 @@ const Header = () => {
       <section className="logo-search">
         <div className="layout-width">
           <Link to="/">
-            <img src={testLogo} alt={t('로고')} />
+            <LogoImage src={logo} alt={t('로고')} />
           </Link>
 
           <form autoComplete="off">

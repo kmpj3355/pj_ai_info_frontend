@@ -1,19 +1,15 @@
-'use client';
-import React, { useLayoutEffect } from 'react';
-import { getUserStates } from '@/commons/contexts/UserInfoContext';
-import { useRouter } from 'next/navigation';
+import React, { useContext } from 'react';
+import loadable from '@loadable/component';
+import UserInfoContext from '../modules/UserInfoContext';
+
+const UnAuthorized = loadable(() => import('../../commons/pages/UnAuthorized'));
 
 const GuestOnlyContainer = ({ children }) => {
-  const { isLogin } = getUserStates();
-  const router = useRouter();
+  const {
+    states: { isLogin },
+  } = useContext(UserInfoContext);
 
-  useLayoutEffect(() => {
-    if (isLogin) {
-      router.back();
-    }
-  }, [isLogin, router]);
-
-  return children;
+  return isLogin ? <UnAuthorized /> : children;
 };
 
 export default React.memo(GuestOnlyContainer);
