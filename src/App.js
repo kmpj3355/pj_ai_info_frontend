@@ -5,9 +5,12 @@ import {
   useLocation,
 } from 'react-router-dom';
 import loadable from '@loadable/component';
+import 'bootstrap/dist/css/bootstrap.min.css'; // 반응형웹
+import { useMediaQuery } from 'react-responsive';
 
 const MainLayout = loadable(() => import('./layouts/MainLayout'));
 const NotFound = loadable(() => import('./commons/pages/NotFound'));
+
 const Main = loadable(() => import('./main/pages/Main')); // 메인페이지
 
 // 회원 페이지
@@ -35,9 +38,23 @@ const AppContent = () => {
 };
 
 const App = () => {
+  const isDesktop = useMediaQuery({ query: '(min-width: 769px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
   return (
     <Router>
-      <AppContent />
+      <div className="container-fluid">
+        <div className="row">
+          {/* 반응형 크기 설정된 col-12, col-md-6 적용 */}
+          <div className={`col-12 ${isDesktop ? '' : 'col-md-6'}`}>
+            <AppContent />
+            <div>
+              {isDesktop }
+              {isMobile }
+            </div>
+          </div>
+        </div>
+      </div>
     </Router>
   );
 };

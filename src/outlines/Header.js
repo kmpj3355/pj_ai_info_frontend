@@ -9,6 +9,7 @@ import fontSize from '../styles/fontSize';
 import { color } from '../styles/color';
 import logo from '../images/logo.png';
 import MainMenu from './MainMenu';
+import { useMediaQuery } from 'react-responsive';
 
 import UserInfoContext from '../member/modules/UserInfoContext';
 
@@ -145,6 +146,7 @@ const LogoImage = styled.img`
 `;
 
 const Header = () => {
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' }); // 모바일 크기 여부 확인
   const { t } = useTranslation();
   const {
     states: { isLogin, userInfo, isAdmin },
