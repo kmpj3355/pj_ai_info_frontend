@@ -17,16 +17,107 @@ import { SmallButton } from '../commons/components/Buttons';
 
 const { primary, dark, light, info } = color;
 
+// PC용 검색창 스타일
+const SearchForm = styled.form`
+  display: flex;
+  height: 50px;
+  max-width: 400px;
+  min-width: 200px;
+  width: 100%;
+  background: #fff;
+  border-radius: 25px;
+  padding: 5px 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  input[type='text'] {
+    flex-grow: 1;
+    border: none;
+    border-radius: 25px;
+    padding: 0 10px;
+    outline: none;
+    font-size: ${fontSize.medium};
+    min-width: 0;
+  }
+
+  button {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: ${info};
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5px;
+
+    svg {
+      color: #fff;
+      font-size: 1.2rem;
+    }
+  }
+`;
+
+const MobileSearchBar = styled.form`
+  display: flex;
+  width: 30%;
+  height: 40px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 0 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  margin-left: 100px;
+  margin-right: auto;
+
+  input[type='text'] {
+    flex-grow: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 0 10px;
+    outline: none;
+    font-size: ${fontSize.small};
+  }
+
+  button {
+    width: 36px;
+    height: 36px;
+    background: ${info};
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center; // button이 검색창 높이의 중앙에 위치하도록 설정
+
+    svg {
+      color: #fff;
+      font-size: 1.2rem;
+    }
+  }
+`;
+
 const HeaderBox = styled.header`
+ width: 100%;
+  max-width: 1900px; /* 최대 폭 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
+
   .site-top {
-    background: #f9f9f9; /* 밝은 그레이톤 배경 */
-    border-bottom: 2px solid #ebebeb; /* 밝은 회색 테두리 */
+    background: #f9f9f9;
+    border-bottom: 2px solid #ebebeb;
     height: 25px;
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 효과 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     position: relative;
     z-index: 10;
 
@@ -39,7 +130,7 @@ const HeaderBox = styled.header`
         margin-right: 15px;
         font-size: ${fontSize.medium};
         color: ${dark};
-        font-weight: 600; /* 두꺼운 폰트로 강조 */
+        font-weight: 600;
       }
 
       a {
@@ -48,7 +139,7 @@ const HeaderBox = styled.header`
         text-decoration: none;
         margin-left: 15px;
         padding: 8px 20px;
-        border-radius: 50px; /* 둥근 버튼 스타일 */
+        border-radius: 50px;
         transition: background-color 0.3s, color 0.3s;
         background-color: transparent;
 
@@ -67,86 +158,36 @@ const HeaderBox = styled.header`
 
   .logo-search {
     padding: 20px 0;
-    background: linear-gradient(
-      135deg,
-      #fff,
-      #2193b0
-    ); /* 부드러운 그라데이션 배경 */
+    background: linear-gradient(135deg, #fff, #2193b0);
     color: ${light};
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 살짝 더 강한 그림자 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 
     .layout-width {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      max-width: 1200px; /* 중앙에 고정된 넓이 */
+      max-width: 1200px;
       margin: 0 auto;
-    }
-
-    form {
-      display: flex;
-      height: 50px;
-      width: 400px;
-      background: #fff;
-      border-radius: 25px;
-      padding: 5px 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.3s;
-
-      &:hover {
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
-      }
-
-      input[type='text'] {
-        flex-grow: 1;
-        border: none;
-        border-radius: 25px;
-        padding: 0 15px;
-        outline: none;
-        font-size: ${fontSize.medium};
-      }
-
-      button {
-        width: 45px;
-        height: 40px;
-        background: ${info};
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: background-color 0.3s;
-
-        svg {
-          color: #fff;
-          font-size: 1.5rem;
-        }
-
-        &:hover {
-          background-color: ${dark};
-        }
-      }
     }
   }
 `;
 
 const LogoImage = styled.img`
-  width: 80px; // 적당한 크기의 로고
-  height: auto; // 높이는 자동으로
+  width: 80px;
+  height: auto;
   transition: transform 0.3s;
 
   &:hover {
-    transform: scale(1.1); // 로고에 마우스를 올리면 확대되는 효과
+    transform: scale(1.1);
   }
 `;
 
 const Header = () => {
-  const isMobile = useMediaQuery({ query: '(max-width: 767px)' }); // 모바일 크기 여부 확인
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' }); // 모바일 크기 여부 확인
   const { t } = useTranslation();
   const {
     states: { isLogin, userInfo, isAdmin },
@@ -161,8 +202,12 @@ const Header = () => {
   }, [setIsLogin, setIsAdmin, setUserInfo]);
 
   // 관리자 URL
-  const adminUrl =
-    process.env.REACT_APP_ADMIN_URL + '?token=' + cookies.load('token');
+
+  const adminUrl = `${process.env.REACT_APP_ADMIN_URL}?token=${cookies.load(
+    'token',
+  )}`;
+
+  console.log('Is mobile:', isMobile);
 
   return (
     <HeaderBox>
@@ -208,20 +253,35 @@ const Header = () => {
           )}
         </div>
       </section>
+
+      {/* logo-search 섹션을 한 번만 남깁니다 */}
       <section className="logo-search">
         <div className="layout-width">
           <Link to="/">
             <LogoImage src={logo} alt={t('로고')} />
           </Link>
 
-          <form autoComplete="off">
-            <input type="text" />
-            <button type="submit">
-              <FaSearch />
-            </button>
-          </form>
+          {/* 데스크탑에서는 SearchForm만, 모바일에서는 MobileSearchBar만 보이게 조건부 렌더링 */}
+
+          {/* 모바일과 PC에 따라 검색창 컴포넌트 교체 */}
+          {isMobile ? (
+            <MobileSearchBar autoComplete="off">
+              <input type="text" placeholder={t('검색어를 입력하세요')} />
+              <button type="submit">
+                <FaSearch />
+              </button>
+            </MobileSearchBar>
+          ) : (
+            <SearchForm autoComplete="off">
+              <input type="text" placeholder={t('검색어를 입력하세요')} />
+              <button type="submit">
+                <FaSearch />
+              </button>
+            </SearchForm>
+          )}
         </div>
       </section>
+
       <MainMenu />
     </HeaderBox>
   );

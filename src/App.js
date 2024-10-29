@@ -19,6 +19,7 @@ const Member = loadable(() => import('./routes/Member'));
 //에이아이 인포 페이지
 const AiInfo = loadable(() => import('./routes/AiInfo'));
 
+
 const routeUrlPaths = ['member', 'aiinfo'];
 const AppContent = () => {
   const location = useLocation();
